@@ -1,0 +1,60 @@
+{
+	"name": "CargarInterfaceCodigoUnicoCliente_BK",
+	"properties": {
+		"folder": {
+			"name": "Cargar Interfaces"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "InSeir",
+						"type": "DatasetReference"
+					},
+					"name": "LeerInterface"
+				},
+				{
+					"dataset": {
+						"referenceName": "BdNormativo",
+						"type": "DatasetReference"
+					},
+					"name": "TipoDocumentoIdentidad"
+				},
+				{
+					"dataset": {
+						"referenceName": "BdNormativo",
+						"type": "DatasetReference"
+					},
+					"name": "TipoDocumentoTributario"
+				}
+			],
+			"sinks": [
+				{
+					"name": "RegistrarError"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Filtrar"
+				},
+				{
+					"name": "Delimitar"
+				},
+				{
+					"name": "ValidarTipDoc"
+				},
+				{
+					"name": "DivideTipDoc"
+				},
+				{
+					"name": "ValidarTipDocTrib"
+				},
+				{
+					"name": "DivideTipDocTrib"
+				}
+			],
+			"script": "source(output(\n\t\tLINEA as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> LeerInterface\nsource(output(\n\t\tid as string,\n\t\tdescripcion as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> TipoDocumentoIdentidad\nsource(output(\n\t\tid as integer,\n\t\tdescripcion as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> TipoDocumentoTributario\nLeerInterface filter(startsWith(LINEA, 'I')) ~> Filtrar\nFiltrar derive(codigoUnicoCliente = substring(LINEA, 2, 20),\n\t\ttipoDocumento = substring(LINEA, 22, 2),\n\t\tdocumentoIdentidad = substring(LINEA, 24, 12),\n\t\tciiu = substring(LINEA, 36, 4),\n\t\tpartidaRegistral = toString(null()),\n\t\toficinaResgistral = substring(LINEA, 40, 2),\n\t\ttipoIdentificacionRegistral = substring(LINEA, 44, 1),\n\t\tnumeroPartidaRegistral = toString(null()),\n\t\ttipoDocumentoTributario = substring(LINEA, 55, 1),\n\t\tdocumentoTributario = substring(LINEA, 56, 20),\n\t\ttipoPersona = substring(LINEA, 76, 2),\n\t\tresidencia = substring(LINEA, 78, 2),\n\t\tmagnitud = substring(LINEA, 80, 1),\n\t\taccionista = substring(LINEA, 81, 2),\n\t\trelacionLaboral = substring(LINEA, 83, 2),\n\t\tpaisResidencia = substring(LINEA, 85, 4),\n\t\tgenero = substring(LINEA, 89, 2),\n\t\testadoCivil = substring(LINEA, 91, 2),\n\t\tsigla = substring(LINEA, 93, 20),\n\t\tapellidoPaternoRazonSocial = substring(LINEA, 113, 120),\n\t\tapellidoMaterno = substring(LINEA, 233, 60),\n\t\tprimerNombre = substring(LINEA, 353, 60),\n\t\tsegundoNombre = toString(null()),\n\t\tnombresRestantes = substring(LINEA, 413, 60),\n\t\tdireccion = substring(LINEA, 473, 250),\n\t\ttelefono1 = substring(LINEA, 723, 10),\n\t\ttelefono2 = substring(LINEA, 733, 10),\n\t\tfechaNacimiento = substring(LINEA, 743, 8),\n\t\tocupacion = substring(LINEA, 751, 3),\n\t\tdescripcionOcupacion = substring(LINEA, 754, 60),\n\t\tsectorista = substring(LINEA, 814, 10),\n\t\tapellidoPaternoSectorista = substring(LINEA, 824, 60),\n\t\tapellidoMaternoSectorista = substring(LINEA, 884, 60),\n\t\tprimerNombreSectorista = substring(LINEA, 944, 60),\n\t\tsegundoNombreSectorista = substring(LINEA, 1004, 60),\n\t\tcodigoAgenciaSectorista = substring(LINEA, 1064, 3),\n\t\tnivelRiesgo = substring(LINEA, 1067, 1),\n\t\tfechaRevision = substring(LINEA, 1068, 8),\n\t\trenta = substring(LINEA, 1076, 12),\n\t\tcodigoAgenciaCliente = substring(LINEA, 1088, 3),\n\t\ttipoDocumentoComplementario = substring(LINEA, 1091, 2),\n\t\tdocumentoComplementario = substring(LINEA, 1093, 12),\n\t\tcodigoUbigueo = substring(LINEA, 1105, 6),\n\t\ttipoPersonaJuridica = substring(LINEA, 1111, 2),\n\t\tCategoriaLaboral = substring(LINEA, 1113, 6)) ~> Delimitar\nDelimitar, TipoDocumentoIdentidad lookup(trim(tipoDocumento) == trim(id),\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> ValidarTipDoc\nValidarTipDoc split(isMatch(),\n\tdisjoint: false) ~> DivideTipDoc@(TipDocExiste, TipDocNoExiste)\nDivideTipDoc@TipDocExiste, TipoDocumentoTributario lookup(trim(tipoDocumentoTributario) == toString(TipoDocumentoTributario@id),\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> ValidarTipDocTrib\nValidarTipDocTrib split(isMatch(),\n\tdisjoint: false) ~> DivideTipDocTrib@(TipDocTribExiste, TipDocTribNoExiste)\nDivideTipDocTrib@TipDocTribNoExiste sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tstore: 'cache',\n\tformat: 'inline',\n\toutput: false,\n\tmapColumn(\n\t\tcodigoUnicoCliente,\n\t\ttipoDocumento,\n\t\tdocumentoIdentidad,\n\t\tciiu,\n\t\tpartidaRegistral,\n\t\toficinaResgistral,\n\t\ttipoIdentificacionRegistral,\n\t\tnumeroPartidaRegistral,\n\t\ttipoDocumentoTributario,\n\t\tdocumentoTributario,\n\t\ttipoPersona,\n\t\tresidencia,\n\t\tmagnitud,\n\t\taccionista,\n\t\trelacionLaboral,\n\t\tpaisResidencia,\n\t\tgenero,\n\t\testadoCivil,\n\t\tsigla,\n\t\tapellidoPaternoRazonSocial,\n\t\tapellidoMaterno,\n\t\tprimerNombre,\n\t\tsegundoNombre,\n\t\tnombresRestantes,\n\t\tdireccion,\n\t\ttelefono1,\n\t\ttelefono2,\n\t\tfechaNacimiento,\n\t\tocupacion,\n\t\tdescripcionOcupacion,\n\t\tsectorista,\n\t\tapellidoPaternoSectorista,\n\t\tapellidoMaternoSectorista,\n\t\tprimerNombreSectorista,\n\t\tsegundoNombreSectorista,\n\t\tcodigoAgenciaSectorista,\n\t\tnivelRiesgo,\n\t\tfechaRevision,\n\t\trenta,\n\t\tcodigoAgenciaCliente,\n\t\ttipoDocumentoComplementario,\n\t\tdocumentoComplementario,\n\t\tcodigoUbigueo,\n\t\ttipoPersonaJuridica,\n\t\tCategoriaLaboral\n\t)) ~> RegistrarError"
+		}
+	}
+}

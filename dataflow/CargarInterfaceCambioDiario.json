@@ -1,0 +1,38 @@
+{
+	"name": "CargarInterfaceCambioDiario",
+	"properties": {
+		"folder": {
+			"name": "Cargar Interfaces"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "InSeir",
+						"type": "DatasetReference"
+					},
+					"name": "LeerInterface"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "BdNormativo",
+						"type": "DatasetReference"
+					},
+					"name": "RegistrarInterfaceCambioDiario"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Filtrar"
+				},
+				{
+					"name": "Delimitar"
+				}
+			],
+			"script": "parameters{\n\ttablaDestino as string,\n\tfechaProceso as string\n}\nsource(output(\n\t\tLINEA as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> LeerInterface\nLeerInterface filter(startsWith(LINEA, '2')) ~> Filtrar\nFiltrar derive(fechaProceso = toDate($fechaProceso, 'yyyy-MM-dd'),\n\t\ttipoRegistro = toInteger(substring(LINEA, 1, 1)),\n\t\tunidadMonetaria = trim(substring(LINEA, 2, 3)),\n\t\ttipoCambio = trim(substring(LINEA, 5, 3)),\n\t\tdescripcion = trim(substring(LINEA, 16, 100)),\n\t\tmonto = toDecimal(substring(LINEA, 116, 15), 15, 6),\n\t\tfechaActualizacion = currentDate()) ~> Delimitar\nDelimitar sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:[(concat(\"DELETE FROM \", $tablaDestino, \" WHERE fechaProceso = '\", $fechaProceso, \"'\"))],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tfechaProceso,\n\t\ttipoRegistro,\n\t\tunidadMonetaria,\n\t\ttipoCambio,\n\t\tdescripcion,\n\t\tmonto,\n\t\tfechaActualizacion\n\t)) ~> RegistrarInterfaceCambioDiario"
+		}
+	}
+}

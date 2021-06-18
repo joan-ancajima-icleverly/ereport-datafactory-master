@@ -1,0 +1,25 @@
+{
+	"name": "OutSeir",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "BlobStorageInterfacesSeir",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Archivos"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "outseir"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

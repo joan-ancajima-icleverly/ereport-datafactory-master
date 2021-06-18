@@ -1,0 +1,531 @@
+{
+	"name": "CargarInterfaces",
+	"properties": {
+		"activities": [
+			{
+				"name": "CargarInterfaceFormatoRcd",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_FormatoRcd",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfaceSaldosRcd",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_SaldosRcd",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						},
+						{
+							"maven": {
+								"coordinates": "com.microsoft.azure:spark-mssql-connector_2.12_3.0:1.0.0-alpha"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfaceRcc",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_Rcc",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfaceMaeFusion",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_SatMaeFusion",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfaceSatIndiceMorosidad",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_SatIndiceMorosidad",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfaceMancomunoIssac",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_MancomunoIssac",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfaceTcFormatoRcdV",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_TcFormatoRcdV",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfaceTcSaldosRcdV",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_TcSaldosRcdV",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfaceIssacRcdNoCmr",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_IssacRcdNoCmr",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfacePifRcdNoCmr",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_PifRcdNoCmrV",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfaceParientes",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_Parientes",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfaceCastSalVencidos",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_CastSalVencidos",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfaceRcdRefinaAAMM",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_RcdRefinaAAMM",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfaceRcdRefinaDDMM",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_RcdRefinaDDMM",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfacePifOcredigen",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_PifOcredigen",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfacePifOcredigenV",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_PifOcredigenV",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfaceOcredigen",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_Ocredigen",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfaceIssacOcredigenV",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_IssacOcredigenV",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CargarInterfaceOcredicuo",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_Ocredicuo",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "Procesos"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-05-11T16:42:43Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

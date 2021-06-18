@@ -1,0 +1,83 @@
+{
+	"name": "Principal",
+	"properties": {
+		"activities": [
+			{
+				"name": "CargarInterfaces",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "CargarInterfaces",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "GenerarInterfaces",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ProcesarRcd",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "GenerarInterfaceRCD",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ProcesarInformacionOrigen",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "CargarInterfaces",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ProcesarInformacionOrigen",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ProcesarRcd",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ProcesarInformacionOrigen",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ProcesarRcd",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2021-05-09T07:50:24Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,28 @@
+{
+	"name": "BdNormativo",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSQLAuqui",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"tabla": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Base de Datos"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": {
+				"value": "@dataset().tabla",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

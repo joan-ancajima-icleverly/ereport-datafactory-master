@@ -1,0 +1,41 @@
+{
+	"name": "CargarInterfaceCodigoUnicoCliente",
+	"properties": {
+		"folder": {
+			"name": "Cargar Interfaces"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "InSeir",
+						"type": "DatasetReference"
+					},
+					"name": "LeerInterface"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "BdNormativo",
+						"type": "DatasetReference"
+					},
+					"name": "RegistrarCodigoUnicoCliente"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Filtrar"
+				},
+				{
+					"name": "Delimitar"
+				},
+				{
+					"name": "ModificarFila"
+				}
+			],
+			"script": "source(output(\n\t\tLINEA as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> LeerInterface\nLeerInterface filter(startsWith(LINEA, 'I')) ~> Filtrar\nFiltrar derive(codigoUnicoCliente = trim(substring(LINEA, 2, 20)),\n\t\ttipoDocumento = trim(substring(LINEA, 22, 2)),\n\t\tdocumentoIdentidad = trim(substring(LINEA, 24, 12)),\n\t\tciiu = trim(substring(LINEA, 36, 4)),\n\t\tpartidaRegistral = toString(null()),\n\t\toficinaResgistral = trim(substring(LINEA, 40, 2)),\n\t\ttipoIdentificacionRegistral = trim(substring(LINEA, 44, 1)),\n\t\tnumeroPartidaRegistral = toString(null()),\n\t\ttipoDocumentoTributario = trim(substring(LINEA, 55, 1)),\n\t\tdocumentoTributario = trim(substring(LINEA, 56, 20)),\n\t\ttipoPersona = trim(substring(LINEA, 76, 2)),\n\t\tresidencia = trim(substring(LINEA, 78, 2)),\n\t\tmagnitud = trim(substring(LINEA, 80, 1)),\n\t\taccionista = trim(substring(LINEA, 81, 2)),\n\t\trelacionLaboral = trim(substring(LINEA, 83, 2)),\n\t\tpaisResidencia = trim(substring(LINEA, 85, 4)),\n\t\tgenero = trim(substring(LINEA, 89, 2)),\n\t\testadoCivil = trim(substring(LINEA, 91, 2)),\n\t\tsigla = trim(substring(LINEA, 93, 20)),\n\t\tapellidoPaternoRazonSocial = trim(substring(LINEA, 113, 120)),\n\t\tapellidoMaterno = trim(substring(LINEA, 233, 60)),\n\t\tprimerNombre = trim(substring(LINEA, 353, 60)),\n\t\tsegundoNombre = toString(null()),\n\t\tnombresRestantes = trim(substring(LINEA, 413, 60)),\n\t\tdireccion = trim(trim(substring(LINEA, 473, 250))),\n\t\ttelefono1 = trim(substring(LINEA, 723, 10)),\n\t\ttelefono2 = trim(substring(LINEA, 733, 10)),\n\t\tfechaNacimiento = trim(substring(LINEA, 743, 8)),\n\t\tocupacion = trim(substring(LINEA, 751, 3)),\n\t\tdescripcionOcupacion = trim(substring(LINEA, 754, 60)),\n\t\tsectorista = trim(substring(LINEA, 814, 10)),\n\t\tapellidoPaternoSectorista = trim(substring(LINEA, 824, 60)),\n\t\tapellidoMaternoSectorista = trim(substring(LINEA, 884, 60)),\n\t\tprimerNombreSectorista = trim(substring(LINEA, 944, 60)),\n\t\tsegundoNombreSectorista = trim(substring(LINEA, 1004, 60)),\n\t\tcodigoAgenciaSectorista = trim(substring(LINEA, 1064, 3)),\n\t\tnivelRiesgo = trim(substring(LINEA, 1067, 1)),\n\t\tfechaRevision = trim(substring(LINEA, 1068, 8)),\n\t\trenta = trim(substring(LINEA, 1076, 12)),\n\t\tcodigoAgenciaCliente = trim(substring(LINEA, 1088, 3)),\n\t\ttipoDocumentoComplementario = trim(substring(LINEA, 1091, 2)),\n\t\tdocumentoComplementario = trim(substring(LINEA, 1093, 12)),\n\t\tcodigoUbigueo = trim(substring(LINEA, 1105, 6)),\n\t\ttipoPersonaJuridica = trim(substring(LINEA, 1111, 2)),\n\t\tCategoriaLaboral = trim(substring(LINEA, 1113, 6))) ~> Delimitar\nDelimitar alterRow(upsertIf(true())) ~> ModificarFila\nModificarFila sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['codigoUnicoCliente'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tcodigoUnicoCliente,\n\t\ttipoDocumento,\n\t\tdocumentoIdentidad,\n\t\tciiu,\n\t\tpartidaRegistral,\n\t\toficinaResgistral,\n\t\ttipoIdentificacionRegistral,\n\t\tnumeroPartidaRegistral,\n\t\ttipoDocumentoTributario,\n\t\tdocumentoTributario,\n\t\ttipoPersona,\n\t\tresidencia,\n\t\tmagnitud,\n\t\taccionista,\n\t\trelacionLaboral,\n\t\tpaisResidencia,\n\t\tgenero,\n\t\testadoCivil,\n\t\tsigla,\n\t\tapellidoPaternoRazonSocial,\n\t\tapellidoMaterno,\n\t\tprimerNombre,\n\t\tsegundoNombre,\n\t\tnombresRestantes,\n\t\tdireccion,\n\t\ttelefono1,\n\t\ttelefono2,\n\t\tfechaNacimiento,\n\t\tocupacion,\n\t\tdescripcionOcupacion,\n\t\tsectorista,\n\t\tapellidoPaternoSectorista,\n\t\tapellidoMaternoSectorista,\n\t\tprimerNombreSectorista,\n\t\tsegundoNombreSectorista,\n\t\tcodigoAgenciaSectorista,\n\t\tnivelRiesgo,\n\t\tfechaRevision,\n\t\trenta,\n\t\tcodigoAgenciaCliente,\n\t\ttipoDocumentoComplementario,\n\t\tdocumentoComplementario,\n\t\tcodigoUbigueo,\n\t\ttipoPersonaJuridica,\n\t\tCategoriaLaboral\n\t)) ~> RegistrarCodigoUnicoCliente"
+		}
+	}
+}

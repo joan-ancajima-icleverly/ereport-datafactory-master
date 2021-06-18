@@ -1,0 +1,41 @@
+{
+	"name": "ActualizarCodigoDeudorSBS",
+	"properties": {
+		"folder": {
+			"name": "Cargar Interfaces"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "InSeir",
+						"type": "DatasetReference"
+					},
+					"name": "LeerInterface"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "BdNormativo",
+						"type": "DatasetReference"
+					},
+					"name": "ActualizarCodigoDeudorSBS"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Filtrar"
+				},
+				{
+					"name": "Delimitar"
+				},
+				{
+					"name": "ModificarFila"
+				}
+			],
+			"script": "source(output(\n\t\tLINEA as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> LeerInterface\nLeerInterface filter(startsWith(LINEA, '11')) ~> Filtrar\nFiltrar derive(tipoDocumento = trim(substring(LINEA, 72, 1)),\n\t\tdocumentoIdentidad = trim(substring(LINEA, 73, 12)),\n\t\tcodigoDeudorSBS = trim(substring(LINEA, 11, 10))) ~> Delimitar\nDelimitar alterRow(upsertIf(true())) ~> ModificarFila\nModificarFila sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['tipoDocumento','documentoIdentidad'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\ttipoDocumento,\n\t\tdocumentoIdentidad,\n\t\tcodigoDeudorSBS\n\t)) ~> ActualizarCodigoDeudorSBS"
+		}
+	}
+}

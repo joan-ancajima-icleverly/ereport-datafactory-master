@@ -1,0 +1,9 @@
+{
+	"name": "dfeReport",
+	"location": "centralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "7893e10a-e1cc-4c3d-ab8a-45d09cde5592",
+		"tenantId": "802abeec-0c6c-4d9f-a6b9-f4d419f09189"
+	}
+}

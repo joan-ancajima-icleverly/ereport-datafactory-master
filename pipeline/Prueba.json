@@ -1,0 +1,33 @@
+{
+	"name": "Prueba",
+	"properties": {
+		"activities": [
+			{
+				"name": "Getdate",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[Usp_Getdate]"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureSQLAuqui",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "ProcesosOld"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-05-08T16:22:16Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,41 @@
+{
+	"name": "CargarInterfaceCodigoUnicoClienteDetalle",
+	"properties": {
+		"folder": {
+			"name": "Cargar Interfaces"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "InSeir",
+						"type": "DatasetReference"
+					},
+					"name": "LeerInterface"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "BdNormativo",
+						"type": "DatasetReference"
+					},
+					"name": "RegistrarCodigoUnicoClienteDetalle"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Filtrar"
+				},
+				{
+					"name": "Delimitar"
+				},
+				{
+					"name": "ModificarFila"
+				}
+			],
+			"script": "source(output(\n\t\tLINEA as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> LeerInterface\nLeerInterface filter(startsWith(LINEA, 'I')) ~> Filtrar\nFiltrar derive(codigoUnicoCliente = trim(substring(LINEA, 2, 20)),\n\t\tnumeroCuenta = trim(substring(LINEA, 22, 20)),\n\t\tproductoFinanciero = trim(substring(LINEA, 42, 2)),\n\t\tfechaAperturaCuenta = trim(substring(LINEA, 44, 8)),\n\t\tfechaAprobacionCredito = trim(substring(LINEA, 52, 8)),\n\t\tfechaCastigo = toString(null()),\n\t\tdiasAtrasoCastigo = toString(null()),\n\t\tfechaJudicial = toString(null()),\n\t\tdiasAtrasoJudicial = toString(null()),\n\t\tfechaRefinanciado = toString(null()),\n\t\tdiasAtrasoRefinanciado = substring(LINEA, 76, 2),\n\t\ttipoDocumentoAval = substring(LINEA, 78, 2),\n\t\tdocumentoIdentidadAval = substring(LINEA, 80, 1),\n\t\tsectorista = substring(LINEA, 81, 2),\n\t\tagenciaSectorista = substring(LINEA, 83, 2),\n\t\tfechaTransferencia = substring(LINEA, 85, 4),\n\t\tdiasAtrasoTransferencia = substring(LINEA, 89, 2),\n\t\tfechaActualizacion = substring(LINEA, 91, 2)) ~> Delimitar\nDelimitar alterRow(upsertIf(true())) ~> ModificarFila\nModificarFila sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['codigoUnicoCliente','numeroCuenta','productoFinanciero'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tcodigoUnicoCliente,\n\t\tnumeroCuenta,\n\t\tproductoFinanciero,\n\t\tfechaAperturaCuenta,\n\t\tfechaAprobacionCredito,\n\t\tfechaCastigo,\n\t\tdiasAtrasoCastigo,\n\t\tfechaJudicial,\n\t\tdiasAtrasoJudicial,\n\t\tfechaRefinanciado,\n\t\tdiasAtrasoRefinanciado,\n\t\ttipoDocumentoAval,\n\t\tdocumentoIdentidadAval,\n\t\tsectorista,\n\t\tagenciaSectorista,\n\t\tfechaTransferencia,\n\t\tdiasAtrasoTransferencia,\n\t\tfechaActualizacion\n\t)) ~> RegistrarCodigoUnicoClienteDetalle"
+		}
+	}
+}

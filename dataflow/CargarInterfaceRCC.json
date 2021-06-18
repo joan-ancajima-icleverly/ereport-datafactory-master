@@ -1,0 +1,48 @@
+{
+	"name": "CargarInterfaceRCC",
+	"properties": {
+		"folder": {
+			"name": "Cargar Interfaces"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "InSeir",
+						"type": "DatasetReference"
+					},
+					"name": "LeerInterface"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "BdNormativo",
+						"type": "DatasetReference"
+					},
+					"name": "RegistrarInterfaceRcc"
+				},
+				{
+					"dataset": {
+						"referenceName": "BdNormativo",
+						"type": "DatasetReference"
+					},
+					"name": "RegistrarRccSaldos"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Delimitar"
+				},
+				{
+					"name": "DivideRcc"
+				},
+				{
+					"name": "Delimitar2"
+				}
+			],
+			"script": "parameters{\n\ttablaDestino as string,\n\ttablaDestino2 as string,\n\tfechaProceso as string\n}\nsource(output(\n\t\tLINEA as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> LeerInterface\nDivideRcc@Rcc derive(fechaProceso = toDate($fechaProceso, 'yyyy-MM-dd'),\n\t\tcodigoDeudorSBS = trim(right(slice(split(LINEA, '|'), 1)[1], length(slice(split(LINEA, '|'), 1)[1]) - 1)),\n\t\ttipoDocumentoTributario = trim(slice(split(LINEA, '|'), 3)[1]),\n\t\tdocumentoTributario = trim(slice(split(LINEA, '|'), 4)[1]),\n\t\ttipoDocumentoIdentidad = trim(slice(split(LINEA, '|'), 5)[1]),\n\t\tdocumentoIdentidad = trim(slice(split(LINEA, '|'), 6)[1]),\n\t\ttipoPersona = trim(slice(split(LINEA, '|'), 7)[1]),\n\t\ttipoEmpresa = trim(slice(split(LINEA, '|'), 8)[1]),\n\t\tcantidadEmpresas = trim(slice(split(LINEA, '|'), 9)[1]),\n\t\tdeudaCalificacion0 = trim(slice(split(LINEA, '|'), 10)[1]),\n\t\tdeudaCalificacion1 = slice(split(LINEA, '|'), 11)[1],\n\t\tdeudaCalificacion2 = trim(slice(split(LINEA, '|'), 12)[1]),\n\t\tdeudaCalificacion3 = trim(slice(split(LINEA, '|'), 13)[1]),\n\t\tdeudaCalificacion4 = trim(slice(split(LINEA, '|'), 14)[1]),\n\t\tapellidoPaternoRazonSocial = trim(slice(split(LINEA, '|'), 15)[1]),\n\t\tapellidoMaterno = trim(slice(split(LINEA, '|'), 16)[1]),\n\t\tapellidoCasada = trim(slice(split(LINEA, '|'), 17)[1]),\n\t\tprimerNombre = trim(slice(split(LINEA, '|'), 18)[1]),\n\t\tsegundoNombre = trim(slice(split(LINEA, '|'), 19)[1])) ~> Delimitar\nLeerInterface split(startsWith(LINEA, '1'),\n\tstartsWith(LINEA, '2'),\n\tdisjoint: false) ~> DivideRcc@(Rcc, RccSaldos)\nDivideRcc@RccSaldos derive(fechaProceso = toDate($fechaProceso, 'yyyy-MM-dd'),\n\t\tcodigoDeudorSBS = trim(substring(LINEA, 2, 10)),\n\t\tempresa = trim(substring(LINEA, 12, 5)),\n\t\ttipoCreditoSBS = trim(substring(LINEA, 17, 2)),\n\t\tcuentaContable = trim(substring(LINEA, 19, 14)),\n\t\tdiasAtraso = trim(substring(LINEA, 33, 4)),\n\t\timporte = trim(substring(LINEA, 37, 18)),\n\t\tclasificacionDeudor = trim(substring(LINEA, 55, 1))) ~> Delimitar2\nDelimitar sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:[(concat(\"DELETE FROM \", $tablaDestino, \" WHERE fechaProceso = '\", $fechaProceso, \"'\"))],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tfechaProceso,\n\t\tcodigoDeudorSBS,\n\t\ttipoDocumentoTributario,\n\t\tdocumentoTributario,\n\t\ttipoDocumentoIdentidad,\n\t\tdocumentoIdentidad,\n\t\ttipoPersona,\n\t\ttipoEmpresa,\n\t\tcantidadEmpresas,\n\t\tdeudaCalificacion0,\n\t\tdeudaCalificacion1,\n\t\tdeudaCalificacion2,\n\t\tdeudaCalificacion3,\n\t\tdeudaCalificacion4,\n\t\tapellidoPaternoRazonSocial,\n\t\tapellidoMaterno,\n\t\tapellidoCasada,\n\t\tprimerNombre,\n\t\tsegundoNombre\n\t)) ~> RegistrarInterfaceRcc\nDelimitar2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:[(concat(\"DELETE FROM \", $tablaDestino2, \" WHERE fechaProceso = '\", $fechaProceso, \"'\"))],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tfechaProceso,\n\t\tcodigoDeudorSBS,\n\t\tempresa,\n\t\ttipoCreditoSBS,\n\t\tcuentaContable,\n\t\tdiasAtraso,\n\t\timporte,\n\t\tclasificacionDeudor\n\t)) ~> RegistrarRccSaldos"
+		}
+	}
+}

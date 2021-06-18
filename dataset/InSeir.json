@@ -1,0 +1,44 @@
+{
+	"name": "InSeir",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "BlobStorageInterfacesSeir",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"empresa": {
+				"type": "string"
+			},
+			"fechaProceso": {
+				"type": "string"
+			},
+			"nombreArchivo": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Archivos"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().nombreArchivo",
+					"type": "Expression"
+				},
+				"container": "inseir"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

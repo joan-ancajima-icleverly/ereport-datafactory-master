@@ -1,0 +1,40 @@
+{
+	"name": "CargarInterfaces_copy1",
+	"properties": {
+		"activities": [
+			{
+				"name": "CargarInterfaceRcc",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_Rcc",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "Procesos"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-05-11T03:09:37Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

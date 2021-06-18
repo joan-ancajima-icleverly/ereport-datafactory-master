@@ -1,0 +1,33 @@
+{
+	"name": "PruebaDatabricks",
+	"properties": {
+		"activities": [
+			{
+				"name": "Prueba",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/PruebaDataFactory"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "Procesos"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-05-08T17:47:08Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

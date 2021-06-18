@@ -1,0 +1,38 @@
+{
+	"name": "CargarInterfaceRefinanciados",
+	"properties": {
+		"folder": {
+			"name": "Cargar Interfaces"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "InSeir",
+						"type": "DatasetReference"
+					},
+					"name": "LeerInterface"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "BdNormativo",
+						"type": "DatasetReference"
+					},
+					"name": "RegistrarInterfaceRefinanciados"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Filtrar"
+				},
+				{
+					"name": "Delimitar"
+				}
+			],
+			"script": "parameters{\n\ttablaDestino as string,\n\tfechaProceso as string\n}\nsource(output(\n\t\tLINEA as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> LeerInterface\nLeerInterface filter(startsWith(LINEA, '2')) ~> Filtrar\nFiltrar derive(fechaProceso = toDate($fechaProceso, 'yyyy-MM-dd'),\n\t\tproducto = toString(null()),\n\t\tnumeroCuenta = trim(substring(LINEA, 2, 20)),\n\t\tfechaPaseRef = trim(substring(LINEA, 24, 20)),\n\t\tdiasAtrasoAntesRef = trim(substring(LINEA, 24, 4)),\n\t\tclasificacionDeudor = toString(null()),\n\t\tfechaIndEmpeoramiento = toString(null()),\n\t\tfechaIndMejoramiento = toString(null()),\n\t\toperacionOrigen = toString(null()),\n\t\tcuotasReprogramadas = toString(null()),\n\t\tfechaActualizacion = currentDate()) ~> Delimitar\nDelimitar sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tpreSQLs:[(concat(\"DELETE FROM \", $tablaDestino, \" WHERE fechaProceso = '\", $fechaProceso, \"'\"))],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tfechaProceso,\n\t\tproducto,\n\t\tnumeroCuenta,\n\t\tfechaPaseRef,\n\t\tdiasAtrasoAntesRef,\n\t\tclasificacionDeudor,\n\t\tfechaIndEmpeoramiento,\n\t\tfechaIndMejoramiento,\n\t\toperacionOrigen,\n\t\tcuotasReprogramadas,\n\t\tfechaActualizacion\n\t)) ~> RegistrarInterfaceRefinanciados"
+		}
+	}
+}

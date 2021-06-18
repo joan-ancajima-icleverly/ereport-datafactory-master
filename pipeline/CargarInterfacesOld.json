@@ -1,0 +1,608 @@
+{
+	"name": "CargarInterfacesOld",
+	"properties": {
+		"activities": [
+			{
+				"name": "ObtenerParametros",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "BdNormativo",
+						"type": "DatasetReference",
+						"parameters": {
+							"tabla": "Solicitud"
+						}
+					}
+				}
+			},
+			{
+				"name": "SetEmpresa",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "ObtenerParametros",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "empresa",
+					"value": {
+						"value": "@string(activity('ObtenerParametros').output.firstRow.empresa)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "SetFechaProceso",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "SetProceso",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "fechaProceso",
+					"value": {
+						"value": "@formatDateTime(activity('ObtenerParametros').output.firstRow.fechaProceso, 'yyyy-MM-dd')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "SetNombreArchivo",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "SetFechaProceso",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "nombreArchivo",
+					"value": {
+						"value": "@activity('ObtenerParametros').output.firstRow.archivoEntrada",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "SetTablaDestino",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "SetNombreArchivo",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "tablaDestino",
+					"value": {
+						"value": "@activity('ObtenerParametros').output.firstRow.tablaDestino",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "SetProceso",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "SetEmpresa",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "proceso",
+					"value": {
+						"value": "@string(activity('ObtenerParametros').output.firstRow.proceso)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "EstablecerProceso",
+				"type": "Switch",
+				"dependsOn": [
+					{
+						"activity": "SetTablaDestino2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"on": {
+						"value": "@variables('proceso')",
+						"type": "Expression"
+					},
+					"cases": [
+						{
+							"value": "534",
+							"activities": [
+								{
+									"name": "CargarInterfaceCambioDiario",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "CargarInterfaceCambioDiario",
+											"type": "DataFlowReference",
+											"parameters": {
+												"tablaDestino": {
+													"value": "'@{variables('tablaDestino')}'",
+													"type": "Expression"
+												},
+												"fechaProceso": {
+													"value": "'@{variables('fechaProceso')}'",
+													"type": "Expression"
+												}
+											},
+											"datasetParameters": {
+												"LeerInterface": {
+													"empresa": {
+														"value": "@variables('empresa')",
+														"type": "Expression"
+													},
+													"fechaProceso": {
+														"value": "@variables('fechaProceso')",
+														"type": "Expression"
+													},
+													"nombreArchivo": {
+														"value": "@variables('nombreArchivo')",
+														"type": "Expression"
+													}
+												},
+												"RegistrarInterfaceCambioDiario": {
+													"tabla": {
+														"value": "@variables('tablaDestino')",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						},
+						{
+							"value": "168",
+							"activities": [
+								{
+									"name": "CargarInterfaceCodigoUnicoCliente",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "CargarInterfaceCodigoUnicoCliente",
+											"type": "DataFlowReference",
+											"datasetParameters": {
+												"LeerInterface": {
+													"empresa": {
+														"value": "@variables('empresa')",
+														"type": "Expression"
+													},
+													"fechaProceso": {
+														"value": "@variables('fechaProceso')",
+														"type": "Expression"
+													},
+													"nombreArchivo": {
+														"value": "@variables('nombreArchivo')",
+														"type": "Expression"
+													}
+												},
+												"RegistrarCodigoUnicoCliente": {
+													"tabla": {
+														"value": "@variables('tablaDestino')",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						},
+						{
+							"value": "426",
+							"activities": [
+								{
+									"name": "CargarInterfaceRCC",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "CargarInterfaceRCC",
+											"type": "DataFlowReference",
+											"parameters": {
+												"tablaDestino": {
+													"value": "'@{variables('tablaDestino')}'",
+													"type": "Expression"
+												},
+												"tablaDestino2": {
+													"value": "'@{variables('tablaDestino2')}'",
+													"type": "Expression"
+												},
+												"fechaProceso": {
+													"value": "'@{variables('fechaProceso')}'",
+													"type": "Expression"
+												}
+											},
+											"datasetParameters": {
+												"LeerInterface": {
+													"empresa": {
+														"value": "@variables('empresa')",
+														"type": "Expression"
+													},
+													"fechaProceso": {
+														"value": "@variables('fechaProceso')",
+														"type": "Expression"
+													},
+													"nombreArchivo": {
+														"value": "@variables('nombreArchivo')",
+														"type": "Expression"
+													}
+												},
+												"RegistrarInterfaceRcc": {
+													"tabla": {
+														"value": "@variables('tablaDestino')",
+														"type": "Expression"
+													}
+												},
+												"RegistrarRccSaldos": {
+													"tabla": {
+														"value": "@variables('tablaDestino2')",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						},
+						{
+							"value": "4",
+							"activities": [
+								{
+									"name": "ActualizarCodigoDeudorSBS",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "ActualizarCodigoDeudorSBS",
+											"type": "DataFlowReference",
+											"datasetParameters": {
+												"LeerInterface": {
+													"empresa": {
+														"value": "@variables('empresa')",
+														"type": "Expression"
+													},
+													"fechaProceso": {
+														"value": "@variables('fechaProceso')",
+														"type": "Expression"
+													},
+													"nombreArchivo": {
+														"value": "@variables('nombreArchivo')",
+														"type": "Expression"
+													}
+												},
+												"ActualizarCodigoDeudorSBS": {
+													"tabla": {
+														"value": "@variables('tablaDestino')",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						},
+						{
+							"value": "169",
+							"activities": [
+								{
+									"name": "CargarInterfaceCodigoUnicoClienteDetalle",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "CargarInterfaceCodigoUnicoClienteDetalle",
+											"type": "DataFlowReference",
+											"datasetParameters": {
+												"LeerInterface": {
+													"empresa": {
+														"value": "@variables('empresa')",
+														"type": "Expression"
+													},
+													"fechaProceso": {
+														"value": "@variables('fechaProceso')",
+														"type": "Expression"
+													},
+													"nombreArchivo": {
+														"value": "@variables('nombreArchivo')",
+														"type": "Expression"
+													}
+												},
+												"RegistrarCodigoUnicoClienteDetalle": {
+													"tabla": {
+														"value": "@variables('tablaDestino')",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						},
+						{
+							"value": "746",
+							"activities": [
+								{
+									"name": "CargarInterfaceClienteDesastreNatural",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "CargarInterfaceClienteDesastreNatural",
+											"type": "DataFlowReference",
+											"parameters": {
+												"tablaDestino": {
+													"value": "'@{variables('tablaDestino')}'",
+													"type": "Expression"
+												},
+												"fechaProceso": {
+													"value": "'@{variables('fechaProceso')}'",
+													"type": "Expression"
+												}
+											},
+											"datasetParameters": {
+												"LeerInterface": {
+													"empresa": {
+														"value": "@variables('empresa')",
+														"type": "Expression"
+													},
+													"fechaProceso": {
+														"value": "@variables('fechaProceso')",
+														"type": "Expression"
+													},
+													"nombreArchivo": {
+														"value": "@variables('nombreArchivo')",
+														"type": "Expression"
+													}
+												},
+												"RegistrarInterfaceCodigoUnicoClienteDetalle": {
+													"tabla": {
+														"value": "@variables('tablaDestino')",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						},
+						{
+							"value": "7",
+							"activities": [
+								{
+									"name": "CargarInterfaceRefinanciados",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "CargarInterfaceRefinanciados",
+											"type": "DataFlowReference",
+											"parameters": {
+												"tablaDestino": {
+													"value": "'@{variables('tablaDestino')}'",
+													"type": "Expression"
+												},
+												"fechaProceso": {
+													"value": "'@{variables('fechaProceso')}'",
+													"type": "Expression"
+												}
+											},
+											"datasetParameters": {
+												"LeerInterface": {
+													"empresa": {
+														"value": "@variables('empresa')",
+														"type": "Expression"
+													},
+													"fechaProceso": {
+														"value": "@variables('fechaProceso')",
+														"type": "Expression"
+													},
+													"nombreArchivo": {
+														"value": "@variables('nombreArchivo')",
+														"type": "Expression"
+													}
+												},
+												"RegistrarInterfaceRefinanciados": {
+													"tabla": {
+														"value": "@variables('tablaDestino')",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "Fine"
+									}
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "SetTablaDestino2",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "SetTablaDestino",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "tablaDestino2",
+					"value": {
+						"value": "@activity('ObtenerParametros').output.firstRow.tablaDestino2",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"empresa": {
+				"type": "String"
+			},
+			"proceso": {
+				"type": "String"
+			},
+			"fechaProceso": {
+				"type": "String"
+			},
+			"nombreArchivo": {
+				"type": "String"
+			},
+			"tablaDestino": {
+				"type": "String"
+			},
+			"tablaDestino2": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "ProcesosOld"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-05-08T16:38:14Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

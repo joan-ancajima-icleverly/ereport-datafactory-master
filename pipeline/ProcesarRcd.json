@@ -1,0 +1,356 @@
+{
+	"name": "ProcesarRcd",
+	"properties": {
+		"activities": [
+			{
+				"name": "ActualizarCodigoDeudorSbs",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcCargaInterfaces_ActualizaCodigoDeudorSbs",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "MigracionTipoCreditoSbs",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "ActualizarCodigoDeudorSbs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutarPrcRcd_MigracionTipoCreditoSbs",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "RegistrarClasificacionRefinanciada",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "MigracionTipoCreditoSbs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutarPrcRegistraClasificacionRefinanciada",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "ProcesarClasificacionInterna",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "ProcesarClasificacionRefinanciada",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutarPrcRcdClasificacionInterna",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "ProcesarClasificacionAlineada",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "ProcesarClasificacionInterna",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutarPrcClasificacionAlineada",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						},
+						{
+							"pypi": {
+								"package": "sqlalchemy"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "ProcesarClasificacionRefinanciada",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "RegistrarClasificacionRefinanciada",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutarPrcClasificacionRefinanciada",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						},
+						{
+							"pypi": {
+								"package": "sqlalchemy"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CalcularProvisiones",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "ProcesarClasificacionAlineada",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutarPrcRcdProvisiones",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "AlineamientoInteres",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "CalcularProvisiones",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutarPrcRcdAlineamientoInteres",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "IndicadorAtraso",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "AlineamientoInteres",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcIndicadorAtraso",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Sobreendeudamiento",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "IndicadorAtraso",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/eReport/PkgDataFactory/EjecutaPrcSobreendeudamiento",
+					"libraries": [
+						{
+							"pypi": {
+								"package": "pyodbc"
+							}
+						}
+					]
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickseReport",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "Procesos"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-05-10T21:03:01Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
